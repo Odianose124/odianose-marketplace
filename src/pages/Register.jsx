@@ -1,18 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import {
-  doc,
-  setDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { registerUser } from "../services/authService";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
-import { auth, db } from "../firebase/firebase";
+
 
 function Register() {
   const navigate = useNavigate();
@@ -48,33 +40,12 @@ function Register() {
     try {
       setLoading(true);
 
-      const userCredential =
-        await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-      await updateProfile(userCredential.user, {
-        displayName: fullName,
-      });
-
-      // Save user profile to Firestore
-      await setDoc(
-        doc(db, "users", userCredential.user.uid),
-        {
-          uid: userCredential.user.uid,
-          fullName,
-          email,
-          phone,
-          role: "buyer",
-          wallet: 0,
-          photoURL: "",
-          verified: false,
-          isOnline: false,
-          createdAt: serverTimestamp(),
-        }
-      );
+      await registerUser({
+  fullName,
+  email,
+  phone,
+  password,
+});
 
       alert("🎉 Account created successfully!");
 

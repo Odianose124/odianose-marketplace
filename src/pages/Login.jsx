@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { loginUser } from "../services/authService";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 import Navbar from "../components/Navbar";
-import { auth } from "../firebase/firebase";
+
 
 function Login() {
   const navigate = useNavigate();
@@ -25,11 +25,7 @@ function Login() {
     try {
       setLoading(true);
 
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      await loginUser(email, password);
 
       alert("🎉 Login Successful!");
 
