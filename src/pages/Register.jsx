@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-import Navbar from "../Components/Navbar";
+import Navbar from "../components/Navbar";
 import { auth, db } from "../firebase/firebase";
 
 function Register() {

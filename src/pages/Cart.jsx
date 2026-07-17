@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Trash2, Plus, Minus } from "lucide-react";
 
-import Navbar from "../Components/Navbar";
+import Navbar from "../components/Navbar";
 import { useCart } from "../context/CartContext";
 
 function Cart() {

@@ -8,7 +8,7 @@ import {
   Mail,
 } from "lucide-react";
 
-import Navbar from "../Components/Navbar";
+import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 function Account() {

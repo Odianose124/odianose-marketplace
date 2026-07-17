@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-import MarketplaceHero from "../Components/Marketplace/MarketplaceHero";
-import MarketplaceSearch from "../Components/Marketplace/MarketplaceSearch";
-import CategoryGrid from "../Components/Marketplace/CategoryGrid";
-import ProductGrid from "../Components/Marketplace/ProductGrid";
+import MarketplaceHero from "../components/Marketplace/MarketplaceHero";
+import MarketplaceSearch from "../components/Marketplace/MarketplaceSearch";
+import CategoryGrid from "../components/Marketplace/CategoryGrid";
+import ProductGrid from "../components/Marketplace/ProductGrid";
 
 function Marketplace() {
 

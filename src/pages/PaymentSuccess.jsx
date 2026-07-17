@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 
-import Navbar from "../Components/Navbar";
+import Navbar from "../components/Navbar";
 
 function PaymentSuccess() {
   return (

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-import Navbar from "../Components/Navbar";
+import Navbar from "../components/Navbar";
 import { auth } from "../firebase/firebase";
 
 function Login() {

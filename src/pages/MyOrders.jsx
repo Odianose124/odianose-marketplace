@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebase/firebase";
-import Navbar from "../Components/Navbar";
+import Navbar from "../components/Navbar";
 
 function MyOrders() {
   const [orders, setOrders] = useState([]);
