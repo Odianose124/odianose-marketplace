@@ -8,10 +8,10 @@ import ServiceCard from "../components/ServiceCard";
 import ProviderCard from "../components/ProviderCard";
 import ProductCard from "../components/ProductCard";
 
-import Container from "../components/UI/Container";
-import Section from "../components/UI/Section";
-import Heading from "../components/UI/Heading";
-import Button from "../components/UI/Button";
+import Container from "../components/Ui/Container";
+import Section from "../components/Ui/Section";
+import Heading from "../components/Ui/Heading";
+import Button from "../components/Ui/Button";
 
 import services from "../data/services";
 import providers from "../data/providers";
