@@ -1,5 +1,5 @@
-import AppButton from "../../components/ui/AppButton";
-import AppCard from "../../components/ui/AppCard";
+import AppButton from "../../components/Ui/AppButton";
+import AppCard from "../../components/Ui/AppCard";
 import StepHeader from "../../components/onboarding/StepHeader";
 
 function Welcome({ nextStep }) {

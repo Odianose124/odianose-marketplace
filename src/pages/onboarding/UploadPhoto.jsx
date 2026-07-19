@@ -6,8 +6,8 @@ import { useAuth } from "../../context/AuthContext";
 import { uploadImage } from "../../services/cloudinary";
 
 
-import AppCard from "../../components/ui/AppCard";
-import AppButton from "../../components/ui/AppButton";
+import AppCard from "../../components/Ui/AppCard";
+import AppButton from "../../components/Ui/AppButton";
 import StepHeader from "../../components/onboarding/StepHeader";
 
 function UploadPhoto({ nextStep, previousStep }) {
