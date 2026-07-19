@@ -1,4 +1,8 @@
-import { FaStar, FaComments } from "react-icons/fa";
+import {
+  FaStar,
+  FaComments,
+  FaCheckCircle,
+} from "react-icons/fa";
 
 function OfferCard({ offer }) {
   return (
@@ -6,23 +10,40 @@ function OfferCard({ offer }) {
 
       <div className="flex justify-between items-start">
 
-        <div>
+        <div className="flex gap-4">
 
-          <h2 className="text-2xl font-bold text-gray-800">
-            {offer.sellerName}
-          </h2>
+          <img
+            src={
+              offer.sellerPhoto ||
+              "https://ui-avatars.com/api/?name=Seller"
+            }
+            alt={offer.sellerName}
+            className="w-16 h-16 rounded-full object-cover"
+          />
 
-          <div className="flex items-center gap-2 mt-2">
+          <div>
 
-            <FaStar className="text-yellow-500" />
+            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
 
-            <span className="font-semibold">
-              {offer.rating}
-            </span>
+              {offer.sellerName}
 
-            <span className="text-gray-500">
-              ({offer.reviewCount} Reviews)
-            </span>
+              <FaCheckCircle className="text-green-600 text-lg" />
+
+            </h2>
+
+            <div className="flex items-center gap-2 mt-2">
+
+              <FaStar className="text-yellow-500" />
+
+              <span className="font-semibold">
+                {offer.rating || "5.0"}
+              </span>
+
+              <span className="text-gray-500">
+                ({offer.reviewCount || 0} Reviews)
+              </span>
+
+            </div>
 
           </div>
 
@@ -31,20 +52,29 @@ function OfferCard({ offer }) {
         <div className="text-right">
 
           <h2 className="text-3xl font-bold text-green-700">
-            ₦{offer.price?.toLocaleString()}
+            ₦
+            {(offer.amount || offer.price)?.toLocaleString()}
           </h2>
 
           <p className="text-gray-500 mt-2">
-            {offer.deliveryTime}
+            {offer.estimatedTime || offer.deliveryTime}
           </p>
 
         </div>
 
       </div>
 
-      <p className="mt-6 text-gray-600 leading-7">
-        {offer.message}
-      </p>
+      <div className="mt-6">
+
+        <p className="text-sm text-gray-500 mb-2">
+          Seller Message
+        </p>
+
+        <p className="text-gray-600 leading-7">
+          {offer.message}
+        </p>
+
+      </div>
 
       <div className="flex gap-4 mt-8">
 
@@ -53,8 +83,11 @@ function OfferCard({ offer }) {
         </button>
 
         <button className="flex items-center justify-center gap-2 flex-1 border border-green-700 text-green-700 py-3 rounded-xl hover:bg-green-50 transition">
+
           <FaComments />
+
           Chat Seller
+
         </button>
 
       </div>

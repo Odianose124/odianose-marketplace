@@ -6,6 +6,7 @@ import OnboardingRoute from "./components/OnboardingRoute";
 import CreateRequest from "./pages/requests/CreateRequest";
 import MyRequests from "./pages/requests/MyRequests";
 import RequestDetails from "./pages/requests/RequestDetails";
+import SubmitOffer from "./pages/seller/SubmitOffer";
 
 
 // Public Pages
@@ -210,6 +211,11 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+  path="/seller/offer/:id"
+  element={<SubmitOffer />}
+/>
 
 
 

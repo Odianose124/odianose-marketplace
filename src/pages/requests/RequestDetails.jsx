@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import { useRequests } from "../../context/RequestContext";
+import { useResponses } from "../../context/ResponseContext";
 
 import RequestStatusBadge from "../../components/requests/RequestStatusBadge";
 import EmptyOffers from "../../components/requests/EmptyOffers";
@@ -17,11 +18,16 @@ function RequestDetails() {
   } = useRequests();
 
   useEffect(() => {
-    loadRequest(id);
-  }, [id]);
+  loadRequest(id);
+  loadOffers(id);
+}, [id]);
 
   // Temporary until we connect Firestore offers
-  const offers = [];
+  const {
+  offers,
+  loadingOffers,
+  loadOffers,
+} = useResponses();
 
   if (loadingRequest) {
     return (
@@ -45,6 +51,8 @@ function RequestDetails() {
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-10">
+
+      {/* Request Details */}
 
       <div className="bg-white rounded-3xl shadow-lg p-8">
 
@@ -108,7 +116,22 @@ function RequestDetails() {
 
         </div>
 
+        {/* Seller Submit Offer Button */}
+
+        <div className="mt-10 border-t pt-8">
+
+          <Link
+            to={`/seller/offer/${selectedRequest.id}`}
+            className="inline-flex items-center bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl transition"
+          >
+            Submit Offer
+          </Link>
+
+        </div>
+
       </div>
+
+      {/* Seller Offers */}
 
       <div className="bg-white rounded-3xl shadow-lg p-8 mt-10">
 
@@ -126,7 +149,19 @@ function RequestDetails() {
 
         <div className="mt-8">
 
-          {offers.length === 0 ? (
+          
+
+          {loadingOffers ? (
+
+  <div className="text-center py-12">
+
+    <h2 className="text-xl font-semibold text-green-700">
+      Loading Offers...
+    </h2>
+
+  </div>
+
+) : offers.length === 0 ? (
 
             <EmptyOffers />
 
