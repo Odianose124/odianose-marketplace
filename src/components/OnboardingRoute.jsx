@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function ProtectedRoute({ children }) {
+function OnboardingRoute({ children }) {
   const { currentUser, userProfile, loading } = useAuth();
 
   if (loading) {
@@ -17,7 +17,7 @@ function ProtectedRoute({ children }) {
     return <Navigate to="/login" replace />;
   }
 
-  // Logged in but profile hasn't loaded yet
+  // Wait for profile to load
   if (!userProfile) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -26,12 +26,12 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  // User hasn't completed onboarding
-  if (!userProfile.profileCompleted) {
-    return <Navigate to="/complete-profile" replace />;
+  // User already completed onboarding
+  if (userProfile.profileCompleted) {
+    return <Navigate to="/" replace />;
   }
 
   return children;
 }
 
-export default ProtectedRoute;
+export default OnboardingRoute;

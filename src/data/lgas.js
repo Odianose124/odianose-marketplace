@@ -1,0 +1,52 @@
+const lgas = {
+  Lagos: [
+    "Agege",
+    "Ajeromi-Ifelodun",
+    "Alimosho",
+    "Amuwo-Odofin",
+    "Apapa",
+    "Badagry",
+    "Epe",
+    "Eti-Osa",
+    "Ibeju-Lekki",
+    "Ifako-Ijaiye",
+    "Ikeja",
+    "Ikorodu",
+    "Kosofe",
+    "Lagos Island",
+    "Lagos Mainland",
+    "Mushin",
+    "Ojo",
+    "Oshodi-Isolo",
+    "Shomolu",
+    "Surulere",
+  ],
+
+  Abuja: [
+    "Abaji",
+    "Bwari",
+    "Gwagwalada",
+    "Kuje",
+    "Kwali",
+    "Municipal Area Council",
+  ],
+
+  Edo: [
+    "Egor",
+    "Esan Central",
+    "Esan North East",
+    "Esan South East",
+    "Esan West",
+    "Etsako Central",
+    "Etsako East",
+    "Etsako West",
+    "Ikpoba-Okha",
+    "Oredo",
+    "Orhionmwon",
+    "Ovia North East",
+    "Ovia South West",
+    "Uhunmwonde",
+  ],
+};
+
+export default lgas;

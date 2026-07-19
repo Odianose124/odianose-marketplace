@@ -1,6 +1,11 @@
 import Navbar from "./components/Navbar";
 import { Routes, Route } from "react-router-dom";
 import Wishlist from "./pages/Wishlist";
+import CompleteProfile from "./pages/onboarding/CompleteProfile";
+import OnboardingRoute from "./components/OnboardingRoute";
+import CreateRequest from "./pages/requests/CreateRequest";
+import MyRequests from "./pages/requests/MyRequests";
+import RequestDetails from "./pages/requests/RequestDetails";
 
 
 // Public Pages
@@ -36,7 +41,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   return (
     <Routes>
-      ...
+      
 
 
       {/* PUBLIC */}
@@ -55,6 +60,14 @@ function App() {
       <Route path="/register" element={<Register />} />
 
       <Route path="/login" element={<Login />} />
+      <Route
+  path="/complete-profile"
+  element={
+    <OnboardingRoute>
+      <CompleteProfile />
+    </OnboardingRoute>
+  }
+/>
 
 
 
@@ -78,6 +91,33 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+  path="/create-request"
+  element={
+    <ProtectedRoute>
+      <CreateRequest />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/my-requests"
+  element={
+    <ProtectedRoute>
+      <MyRequests />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/request/:id"
+  element={
+    <ProtectedRoute>
+      <RequestDetails />
+    </ProtectedRoute>
+  }
+/>
 
 
       <Route

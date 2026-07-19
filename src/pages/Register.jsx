@@ -49,7 +49,7 @@ function Register() {
 
       alert("🎉 Account created successfully!");
 
-      navigate("/");
+      navigate("/complete-profile");
 
     } catch (err) {
       console.error(err);

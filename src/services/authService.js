@@ -94,6 +94,18 @@ export async function registerUser({
     longitude: null,
 
     createdAt: serverTimestamp(),
+
+profileCompleted: false,
+
+onboardingStep: 1,
+
+capabilities: {
+  canBuy: true,
+  canSell: false,
+  canOfferServices: false,
+  canFulfillRequests: false,
+  canDeliver: false,
+},
   });
 
   return user;

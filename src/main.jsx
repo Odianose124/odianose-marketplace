@@ -7,6 +7,7 @@ import App from "./App";
 
 import { CartProvider } from "./context/CartContext";
 import { AuthProvider } from "./context/AuthContext";
+import { RequestProvider } from "./context/RequestContext";
 
 import "./index.css";
 
@@ -21,17 +22,21 @@ ReactDOM.createRoot(
 
       <AuthProvider>
 
-        <WishlistProvider>
+  <RequestProvider>
 
-    <CartProvider>
+    <WishlistProvider>
+
+      <CartProvider>
 
         <App />
 
-    </CartProvider>
+      </CartProvider>
 
-</WishlistProvider>
+    </WishlistProvider>
 
-      </AuthProvider>
+  </RequestProvider>
+
+</AuthProvider>
 
     </BrowserRouter>
 
