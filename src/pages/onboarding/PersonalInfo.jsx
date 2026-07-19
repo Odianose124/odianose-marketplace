@@ -4,8 +4,8 @@ import { doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
 
-import AppCard from "../../components/Ui/AppCard";
-import AppButton from "../../components/Ui/AppButton";
+import AppCard from "../../components/ui/AppCard";
+import AppButton from "../../components/ui/AppButton";
 import StepHeader from "../../components/onboarding/StepHeader";
 
 function PersonalInfo({ nextStep, previousStep }) {
