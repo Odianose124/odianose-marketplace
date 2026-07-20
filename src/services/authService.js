@@ -14,6 +14,7 @@ import {
 
 import { auth, db } from "../firebase/firebase";
 
+
 // ==========================
 // Register New User
 // ==========================
@@ -23,6 +24,7 @@ export async function registerUser({
   phone,
   password,
 }) {
+
   // Create Firebase Auth account
   const userCredential =
     await createUserWithEmailAndPassword(
@@ -31,93 +33,207 @@ export async function registerUser({
       password
     );
 
+
   const user = userCredential.user;
 
-  // Update display name
+
+  // Update Firebase display name
   await updateProfile(user, {
     displayName: fullName,
   });
 
-  // Create Firestore profile
-  await setDoc(doc(db, "users", user.uid), {
-    uid: user.uid,
 
-    fullName,
+  // Create Firestore user profile
+  await setDoc(
+    doc(db, "users", user.uid),
+    {
 
-    displayName: fullName,
+      uid: user.uid,
 
-    email,
 
-    phone,
+      // Basic Information
+      fullName,
 
-    photoURL: "",
+      displayName: fullName,
 
-    coverPhoto: "",
+      email,
 
-    bio: "",
+      phone,
 
-    roles: {
-      buyer: true,
-      seller: false,
-      serviceProvider: false,
-      admin: false,
-    },
 
-    wallet: {
-      balance: 0,
-      pending: 0,
-      withdrawable: 0,
-    },
+      // Profile
+      photoURL: "",
 
-    verified: false,
+      coverPhoto: "",
 
-    online: false,
+      bio: "",
 
-    lastSeen: serverTimestamp(),
 
-    rating: 0,
 
-    reviewCount: 0,
+      // User Roles
+      roles: {
 
-    completedOrders: 0,
+        buyer: true,
 
-    reputationScore: 100,
+        seller: false,
 
-    state: "",
+        serviceProvider: false,
 
-    lga: "",
+        deliveryPartner: false,
 
-    address: "",
+        admin: false,
 
-    latitude: null,
+      },
 
-    longitude: null,
 
-    createdAt: serverTimestamp(),
 
-profileCompleted: false,
+      // User Abilities
+      capabilities: {
 
-onboardingStep: 1,
+        canBuy: true,
 
-capabilities: {
-  canBuy: true,
-  canSell: false,
-  canOfferServices: false,
-  canFulfillRequests: false,
-  canDeliver: false,
-},
-  });
+        canSell: false,
+
+        canOfferServices: false,
+
+        canFulfillRequests: false,
+
+        canDeliver: false,
+
+      },
+
+
+
+      // Wallet System
+      wallet: {
+
+        balance: 0,
+
+        pending: 0,
+
+        withdrawable: 0,
+
+        escrow: 0,
+
+        totalEarned: 0,
+
+        totalSpent: 0,
+
+      },
+
+
+
+      // Seller Information
+      sellerProfile: {
+
+        active: false,
+
+        verified: false,
+
+        rating: 0,
+
+        reviewCount: 0,
+
+        completedJobs: 0,
+
+        completedSales: 0,
+
+        responseRate: 0,
+
+      },
+
+
+
+      // Buyer Information
+      buyerProfile: {
+
+        totalOrders: 0,
+
+        totalRequests: 0,
+
+        completedPurchases: 0,
+
+      },
+
+
+
+      // Trust System
+      verified: false,
+
+      rating: 0,
+
+      reviewCount: 0,
+
+      reputationScore: 100,
+
+
+
+      // Activity
+      online: false,
+
+      lastSeen: serverTimestamp(),
+
+
+
+      // Order Statistics
+      completedOrders: 0,
+
+
+
+      // Location
+      state: "",
+
+      lga: "",
+
+      address: "",
+
+      latitude: null,
+
+      longitude: null,
+
+
+
+      // Onboarding
+      profileCompleted: false,
+
+      onboardingStep: 1,
+
+
+
+      // Notifications
+      notificationSettings: {
+
+        push: true,
+
+        email: true,
+
+        sms: false,
+
+      },
+
+
+
+      // Account Creation
+      createdAt: serverTimestamp(),
+
+    }
+  );
+
 
   return user;
+
 }
 
+
+
 // ==========================
-// Login
+// Login User
 // ==========================
 export async function loginUser(
   email,
   password
 ) {
+
   const userCredential =
     await signInWithEmailAndPassword(
       auth,
@@ -125,25 +241,47 @@ export async function loginUser(
       password
     );
 
+
   return userCredential.user;
+
 }
 
+
+
 // ==========================
-// Logout
+// Logout User
 // ==========================
 export async function logoutUser() {
+
   await signOut(auth);
+
 }
+
+
 
 // ==========================
 // Get User Profile
 // ==========================
 export async function getUserProfile(uid) {
-  const docRef = doc(db, "users", uid);
 
-  const docSnap = await getDoc(docRef);
+  const userRef = doc(
+    db,
+    "users",
+    uid
+  );
 
-  if (!docSnap.exists()) return null;
 
-  return docSnap.data();
+  const userSnap = await getDoc(userRef);
+
+
+
+  if (!userSnap.exists()) {
+
+    return null;
+
+  }
+
+
+  return userSnap.data();
+
 }
