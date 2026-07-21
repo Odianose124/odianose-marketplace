@@ -7,20 +7,31 @@ import {
 } from "lucide-react";
 
 import { getNearbyRequests } from "../../services/sellerRequestService";
+import { useSeller } from "../../context/SellerContext";
 
 function NearbyRequestsPreview() {
+
+  const { sellerProfile } = useSeller();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+  if (sellerProfile) {
+
     loadRequests();
-  }, []);
+
+  }
+
+}, [sellerProfile]);
 
   const loadRequests = async () => {
     try {
       setLoading(true);
 
-      const data = await getNearbyRequests();
+      const data = await getNearbyRequests(
+  sellerProfile?.category
+);
 
       setRequests(data);
 

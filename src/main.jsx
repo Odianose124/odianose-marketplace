@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 
 import { AuthProvider } from "./context/AuthContext";
+import { SellerProvider } from "./context/SellerContext";
 import { RequestProvider } from "./context/RequestContext";
 import { ResponseProvider } from "./context/ResponseContext";
 import { WishlistProvider } from "./context/WishlistContext";
@@ -21,25 +22,29 @@ ReactDOM.createRoot(
 
       <AuthProvider>
 
+  <SellerProvider>
+
+    <CartProvider>
+
+      <WishlistProvider>
+
         <RequestProvider>
 
           <ResponseProvider>
 
-            <WishlistProvider>
-
-              <CartProvider>
-
-                <App />
-
-              </CartProvider>
-
-            </WishlistProvider>
+             <App />
 
           </ResponseProvider>
 
         </RequestProvider>
 
-      </AuthProvider>
+      </WishlistProvider>
+
+    </CartProvider>
+
+  </SellerProvider>
+
+</AuthProvider>
 
     </BrowserRouter>
 

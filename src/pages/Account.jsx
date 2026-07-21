@@ -6,13 +6,24 @@ import {
   Settings,
   LogOut,
   Mail,
+  Store,
+  LayoutDashboard,
+  ClipboardList,
 } from "lucide-react";
+
+import { useNavigate } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import { useAuth } from "../context/AuthContext";
 
 function Account() {
-  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const {
+    currentUser,
+    userProfile,
+    logout,
+  } = useAuth();
 
   return (
     <>
@@ -22,12 +33,12 @@ function Account() {
 
         <div className="max-w-6xl mx-auto px-6">
 
-          {/* Page Title */}
           <h1 className="text-4xl font-bold mb-8">
             My Account
           </h1>
 
-          {/* Profile Card */}
+          {/* Profile */}
+
           <div className="bg-white rounded-3xl shadow-lg p-8 flex items-center gap-6">
 
             <div className="w-24 h-24 rounded-full bg-green-700 text-white flex items-center justify-center">
@@ -39,12 +50,19 @@ function Account() {
             <div>
 
               <h2 className="text-3xl font-bold">
-                {currentUser?.displayName || "User"}
+                {userProfile?.fullName ||
+                  currentUser?.displayName ||
+                  "User"}
               </h2>
 
               <div className="flex items-center gap-2 mt-2 text-gray-600">
+
                 <Mail size={18} />
-                <span>{currentUser?.email}</span>
+
+                <span>
+                  {currentUser?.email}
+                </span>
+
               </div>
 
               <p className="mt-3 text-green-700 font-semibold">
@@ -55,10 +73,16 @@ function Account() {
 
           </div>
 
-          {/* Dashboard Cards */}
+          {/* Dashboard */}
+
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
 
-            <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition">
+            {/* Orders */}
+
+            <div
+              onClick={() => navigate("/my-orders")}
+              className="cursor-pointer bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition"
+            >
 
               <ShoppingBag
                 className="text-green-700 mb-4"
@@ -70,12 +94,17 @@ function Account() {
               </h3>
 
               <p className="text-gray-500 mt-2">
-                View all your purchases.
+                View your purchases.
               </p>
 
             </div>
 
-            <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition">
+            {/* Wishlist */}
+
+            <div
+              onClick={() => navigate("/wishlist")}
+              className="cursor-pointer bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition"
+            >
 
               <Heart
                 className="text-red-500 mb-4"
@@ -92,24 +121,33 @@ function Account() {
 
             </div>
 
-            <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition">
+            {/* Requests */}
 
-              <Package
+            <div
+              onClick={() => navigate("/my-requests")}
+              className="cursor-pointer bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition"
+            >
+
+              <ClipboardList
                 className="text-blue-600 mb-4"
                 size={34}
               />
 
               <h3 className="text-xl font-bold">
-                My Products
+                My Requests
               </h3>
 
               <p className="text-gray-500 mt-2">
-                Products you're selling.
+                Track service requests.
               </p>
 
             </div>
 
-            <div className="bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition">
+            {/* Settings */}
+
+            <div
+              className="cursor-pointer bg-white rounded-2xl shadow-md p-6 hover:shadow-xl transition"
+            >
 
               <Settings
                 className="text-gray-700 mb-4"
@@ -128,7 +166,76 @@ function Account() {
 
           </div>
 
+          {/* Seller Section */}
+
+          <div className="mt-12">
+
+            {!userProfile?.roles?.seller ? (
+
+              <div className="bg-white rounded-3xl shadow-lg p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+
+                <div>
+
+                  <h2 className="text-3xl font-bold">
+                    Become a Seller
+                  </h2>
+
+                  <p className="text-gray-500 mt-2">
+                    Start selling products and offering services on ODIANOSE.
+                  </p>
+
+                </div>
+
+                <button
+                  onClick={() => navigate("/become-seller")}
+                  className="bg-green-700 text-white px-8 py-4 rounded-xl hover:bg-green-800 transition flex items-center gap-3"
+                >
+
+                  <Store size={22} />
+
+                  Become Seller
+
+                </button>
+
+              </div>
+
+            ) : (
+
+              <div className="bg-white rounded-3xl shadow-lg p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+
+                <div>
+
+                  <h2 className="text-3xl font-bold">
+                    Seller Dashboard
+                  </h2>
+
+                  <p className="text-gray-500 mt-2">
+                    Manage your products, services and earnings.
+                  </p>
+
+                </div>
+
+                <button
+                  onClick={() =>
+                    navigate("/seller-dashboard")
+                  }
+                  className="bg-green-700 text-white px-8 py-4 rounded-xl hover:bg-green-800 transition flex items-center gap-3"
+                >
+
+                  <LayoutDashboard size={22} />
+
+                  Open Dashboard
+
+                </button>
+
+              </div>
+
+            )}
+
+          </div>
+
           {/* Logout */}
+
           <div className="mt-10">
 
             <button
