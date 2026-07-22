@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   serverTimestamp,
@@ -11,6 +12,7 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase/firebase";
+
 
 
 // ======================================
@@ -84,7 +86,7 @@ export async function createOrder({
 
 
 // ======================================
-// BUYER ORDERS
+// GET BUYER ORDERS
 // ======================================
 
 export async function getBuyerOrders(buyerId) {
@@ -114,7 +116,7 @@ export async function getBuyerOrders(buyerId) {
 
 
 // ======================================
-// SELLER ORDERS
+// GET SELLER ORDERS
 // ======================================
 
 export async function getSellerOrders(sellerId) {
@@ -138,6 +140,36 @@ export async function getSellerOrders(sellerId) {
     ...doc.data(),
 
   }));
+
+}
+
+
+
+// ======================================
+// GET SINGLE ORDER
+// ======================================
+
+export async function getOrder(orderId) {
+
+  const snapshot = await getDoc(
+
+    doc(db, "orders", orderId)
+
+  );
+
+  if (!snapshot.exists()) {
+
+    return null;
+
+  }
+
+  return {
+
+    id: snapshot.id,
+
+    ...snapshot.data(),
+
+  };
 
 }
 
@@ -168,6 +200,46 @@ export async function updateOrderStatus(
     }
 
   );
+
+}
+
+
+
+// ======================================
+// START ORDER
+// ======================================
+
+export async function startOrder(orderId) {
+
+  await updateOrderStatus(
+
+    orderId,
+
+    "in-progress"
+
+  );
+
+  return true;
+
+}
+
+
+
+// ======================================
+// COMPLETE ORDER
+// ======================================
+
+export async function completeOrder(orderId) {
+
+  await updateOrderStatus(
+
+    orderId,
+
+    "completed"
+
+  );
+
+  return true;
 
 }
 
