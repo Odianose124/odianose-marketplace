@@ -12,9 +12,12 @@ import {
 } from "firebase/firestore";
 
 import { db } from "../firebase/firebase";
+import { createOrder } from "./orderService";
+
+
 
 // =====================================
-// Submit Seller Offer
+// SUBMIT SELLER OFFER
 // =====================================
 
 export async function submitSellerOffer({
@@ -55,6 +58,8 @@ export async function submitSellerOffer({
 
       createdAt: serverTimestamp(),
 
+      updatedAt: serverTimestamp(),
+
     }
 
   );
@@ -66,7 +71,7 @@ export async function submitSellerOffer({
 
 
 // =====================================
-// Get Offers For Request
+// GET OFFERS FOR REQUEST
 // =====================================
 
 export async function getRequestOffers(requestId) {
@@ -93,8 +98,6 @@ export async function getRequestOffers(requestId) {
 
 }
 
-
-
 // =====================================
 // ACCEPT SELLER OFFER
 // =====================================
@@ -105,17 +108,17 @@ export async function acceptOffer({
 
   requestId,
 
-  sellerId,
-
-  sellerName,
-
 }) {
 
-  // ------------------------------------
-  // Get Request Details
-  // ------------------------------------
+  // ---------------------------------
+  // Get Request
+  // ---------------------------------
 
-  const requestRef = doc(db, "requests", requestId);
+  const requestRef = doc(
+    db,
+    "requests",
+    requestId
+  );
 
   const requestSnap = await getDoc(requestRef);
 
@@ -129,19 +132,67 @@ export async function acceptOffer({
 
 
 
-  // ------------------------------------
-  // Accept Selected Response
-  // ------------------------------------
+  // ---------------------------------
+  // Prevent duplicate acceptance
+  // ---------------------------------
+
+  if (request.status === "accepted") {
+
+    throw new Error(
+      "This request has already been accepted."
+    );
+
+  }
+
+
+
+  // ---------------------------------
+  // Get Accepted Response
+  // ---------------------------------
 
   const responseRef = doc(
-
     db,
-
     "responses",
-
     responseId
-
   );
+
+  const responseSnap = await getDoc(responseRef);
+
+  if (!responseSnap.exists()) {
+
+    throw new Error("Offer not found.");
+
+  }
+
+  const response = responseSnap.data();
+
+
+
+  // ---------------------------------
+  // Update Request FIRST
+  // ---------------------------------
+
+  await updateDoc(requestRef, {
+
+    status: "accepted",
+
+    selectedSeller: {
+
+      sellerId: response.sellerId,
+
+      sellerName: response.sellerName,
+
+    },
+
+    updatedAt: serverTimestamp(),
+
+  });
+
+
+
+  // ---------------------------------
+  // Update Accepted Offer
+  // ---------------------------------
 
   await updateDoc(responseRef, {
 
@@ -153,31 +204,9 @@ export async function acceptOffer({
 
 
 
-  // ------------------------------------
-  // Update Request
-  // ------------------------------------
-
-  await updateDoc(requestRef, {
-
-    status: "accepted",
-
-    selectedSeller: {
-
-      sellerId,
-
-      sellerName,
-
-    },
-
-    updatedAt: serverTimestamp(),
-
-  });
-
-
-
-  // ------------------------------------
-  // Reject Every Other Offer
-  // ------------------------------------
+  // ---------------------------------
+  // Reject Other Offers
+  // ---------------------------------
 
   const offersQuery = query(
 
@@ -189,87 +218,65 @@ export async function acceptOffer({
 
   const offersSnapshot = await getDocs(offersQuery);
 
-  const updates = offersSnapshot.docs.map(async (item) => {
+  await Promise.all(
 
-    if (item.id !== responseId) {
+    offersSnapshot.docs.map(async (offerDoc) => {
 
-      await updateDoc(
+      if (offerDoc.id !== responseId) {
 
-        doc(db, "responses", item.id),
+        await updateDoc(
 
-        {
+          doc(db, "responses", offerDoc.id),
 
-          status: "rejected",
+          {
 
-          updatedAt: serverTimestamp(),
+            status: "rejected",
 
-        }
+            updatedAt: serverTimestamp(),
 
-      );
+          }
 
-    }
+        );
 
-  });
+      }
 
-  await Promise.all(updates);
-
-
-
-  // ------------------------------------
-  // Create Order
-  // ------------------------------------
-
-  await addDoc(
-
-    collection(db, "orders"),
-
-    {
-
-      buyerId: request.buyerId,
-
-      buyerName: request.buyerName,
-
-      sellerId,
-
-      sellerName,
-
-      requestId,
-
-      responseId,
-
-      title: request.title,
-
-      description: request.description,
-
-      category: request.category,
-
-      type: request.type,
-
-      amount: request.budget,
-
-      radius: request.radius,
-
-      orderStatus: "active",
-
-      paymentStatus: "pending",
-
-      deliveryStatus: "waiting",
-
-      createdAt: serverTimestamp(),
-
-      updatedAt: serverTimestamp(),
-
-    }
+    })
 
   );
 
 
 
-  return true;
+  // ---------------------------------
+  // Create Order
+  // ---------------------------------
+
+  const orderId = await createOrder({
+
+    buyerId: request.buyerId,
+
+    buyerName: request.buyerName,
+
+    sellerId: response.sellerId,
+
+    sellerName: response.sellerName,
+
+    requestId,
+
+    responseId,
+
+    title: request.title,
+
+    category: request.category,
+
+    amount: response.offerPrice,
+
+  });
+
+
+
+  return orderId;
 
 }
-
-
 
 // =====================================
 // REJECT SELLER OFFER
@@ -278,19 +285,36 @@ export async function acceptOffer({
 export async function rejectOffer(responseId) {
 
   const responseRef = doc(
-
     db,
-
     "responses",
-
     responseId
-
   );
 
+  const responseSnap = await getDoc(
+    responseRef
+  );
+
+  if (!responseSnap.exists()) {
+
+    throw new Error(
+      "Offer not found."
+    );
+
+  }
+
+  const response = responseSnap.data();
+
+  // Prevent rejecting an already accepted offer
+  if (response.status === "accepted") {
+
+    throw new Error(
+      "Accepted offers cannot be rejected."
+    );
+
+  }
+
   await updateDoc(
-
     responseRef,
-
     {
 
       status: "rejected",
@@ -298,7 +322,6 @@ export async function rejectOffer(responseId) {
       updatedAt: serverTimestamp(),
 
     }
-
   );
 
   return true;

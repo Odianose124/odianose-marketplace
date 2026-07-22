@@ -11,13 +11,15 @@ import {
   rejectOffer,
 } from "../../services/responseService";
 
+import { useResponses } from "../../context/ResponseContext";
+
 
 function OfferCard({ offer }) {
 
   const [loading, setLoading] = useState(false);
 
   const [rejectLoading, setRejectLoading] = useState(false);
-
+const { loadOffers } = useResponses();
 
 
   async function handleAccept() {
@@ -29,24 +31,19 @@ function OfferCard({ offer }) {
 
       await acceptOffer({
 
-        responseId: offer.id,
+  responseId: offer.id,
 
-        requestId: offer.requestId,
+  requestId: offer.requestId,
 
-        sellerId: offer.sellerId,
-
-        sellerName: offer.sellerName,
-
-      });
+});
 
 
 
-      alert(
-        "Offer accepted successfully!"
-      );
+      await loadOffers(offer.requestId);
 
-
-      window.location.reload();
+alert(
+  "Offer accepted successfully!"
+);
 
 
     } catch(error) {
@@ -92,12 +89,11 @@ function OfferCard({ offer }) {
 
 
 
-      alert(
-        "Offer rejected."
-      );
+      await loadOffers(offer.requestId);
 
-
-      window.location.reload();
+alert(
+  "Offer rejected."
+);
 
 
 

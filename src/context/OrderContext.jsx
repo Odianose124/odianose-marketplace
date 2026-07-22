@@ -14,16 +14,17 @@ const OrderContext = createContext(null);
 
 export function OrderProvider({ children }) {
 
-  const [orders, setOrders] = useState([]);
+  const [buyerOrders, setBuyerOrders] = useState([]);
 
-  const [selectedOrder, setSelectedOrder] =
-    useState(null);
+  const [sellerOrders, setSellerOrders] = useState([]);
 
-  const [loadingOrders, setLoadingOrders] =
-    useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
-  const [loadingOrder, setLoadingOrder] =
-    useState(false);
+  const [loadingBuyerOrders, setLoadingBuyerOrders] = useState(false);
+
+  const [loadingSellerOrders, setLoadingSellerOrders] = useState(false);
+
+  const [loadingOrder, setLoadingOrder] = useState(false);
 
 
 
@@ -35,23 +36,19 @@ export function OrderProvider({ children }) {
 
     try {
 
-      setLoadingOrders(true);
+      setLoadingSellerOrders(true);
 
-      const data =
-        await getSellerOrders(sellerId);
+      const data = await getSellerOrders(sellerId);
 
-      setOrders(data);
+      setSellerOrders(data);
 
     } catch (error) {
 
-      console.error(
-        "Order Context Error:",
-        error
-      );
+      console.error("Seller Order Context Error:", error);
 
     } finally {
 
-      setLoadingOrders(false);
+      setLoadingSellerOrders(false);
 
     }
 
@@ -67,23 +64,19 @@ export function OrderProvider({ children }) {
 
     try {
 
-      setLoadingOrders(true);
+      setLoadingBuyerOrders(true);
 
-      const data =
-        await getBuyerOrders(buyerId);
+      const data = await getBuyerOrders(buyerId);
 
-      setOrders(data);
+      setBuyerOrders(data);
 
     } catch (error) {
 
-      console.error(
-        "Order Context Error:",
-        error
-      );
+      console.error("Buyer Order Context Error:", error);
 
     } finally {
 
-      setLoadingOrders(false);
+      setLoadingBuyerOrders(false);
 
     }
 
@@ -101,8 +94,7 @@ export function OrderProvider({ children }) {
 
       setLoadingOrder(true);
 
-      const order =
-        await getOrder(orderId);
+      const order = await getOrder(orderId);
 
       setSelectedOrder(order);
 
@@ -126,17 +118,21 @@ export function OrderProvider({ children }) {
 
       value={{
 
-        orders,
+        buyerOrders,
+
+        sellerOrders,
 
         selectedOrder,
 
-        loadingOrders,
+        loadingBuyerOrders,
+
+        loadingSellerOrders,
 
         loadingOrder,
 
-        loadSellerOrders,
-
         loadBuyerOrders,
+
+        loadSellerOrders,
 
         loadOrder,
 

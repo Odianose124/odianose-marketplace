@@ -11,10 +11,16 @@ function SellerOrders() {
   const { currentUser } = useAuth();
 
   const {
-    orders,
-    loadingOrders,
+
+    sellerOrders,
+
+    loadingSellerOrders,
+
     loadSellerOrders,
+
   } = useOrders();
+
+
 
   useEffect(() => {
 
@@ -34,6 +40,8 @@ function SellerOrders() {
 
       <Navbar />
 
+
+
       <main className="max-w-7xl mx-auto px-6 py-10">
 
         <h1 className="text-4xl font-bold text-green-700 mb-8">
@@ -44,7 +52,7 @@ function SellerOrders() {
 
 
 
-        {loadingOrders ? (
+        {loadingSellerOrders ? (
 
           <div className="bg-white rounded-xl shadow p-10 text-center">
 
@@ -56,7 +64,7 @@ function SellerOrders() {
 
           </div>
 
-        ) : orders.length === 0 ? (
+        ) : sellerOrders.length === 0 ? (
 
           <div className="bg-white rounded-xl shadow p-10 text-center">
 
@@ -68,7 +76,7 @@ function SellerOrders() {
 
             <p className="text-gray-500 mt-3">
 
-              You haven't received any orders yet.
+              You haven't received any Smart Request orders yet.
 
             </p>
 
@@ -78,7 +86,7 @@ function SellerOrders() {
 
           <div className="space-y-8">
 
-            {orders.map((order) => (
+            {sellerOrders.map((order) => (
 
               <div
 
@@ -98,11 +106,15 @@ function SellerOrders() {
 
                     </h2>
 
+
+
                     <p className="text-gray-500 mt-2">
 
                       Buyer: {order.buyerName}
 
                     </p>
+
+
 
                     <p className="text-gray-500">
 
@@ -110,9 +122,11 @@ function SellerOrders() {
 
                     </p>
 
+
+
                     <p className="text-gray-500">
 
-                      Type: {order.type}
+                      Seller: {order.sellerName}
 
                     </p>
 
@@ -124,9 +138,11 @@ function SellerOrders() {
 
                     <h2 className="text-3xl font-bold text-green-700">
 
-                      ₦{order.amount?.toLocaleString()}
+                      ₦{Number(order.amount || 0).toLocaleString()}
 
                     </h2>
+
+
 
                     <span className="inline-block mt-3 bg-green-100 text-green-700 px-4 py-2 rounded-full font-semibold">
 
@@ -150,7 +166,7 @@ function SellerOrders() {
 
                     <p className="text-gray-500 text-sm">
 
-                      Payment
+                      Payment Status
 
                     </p>
 
@@ -168,7 +184,7 @@ function SellerOrders() {
 
                     <p className="text-gray-500 text-sm">
 
-                      Delivery
+                      Delivery Status
 
                     </p>
 

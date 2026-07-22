@@ -3,7 +3,6 @@ import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import OnboardingRoute from "./components/OnboardingRoute";
 
-
 // Public Pages
 import Home from "./pages/Home";
 import Services from "./pages/Services";
@@ -11,7 +10,6 @@ import Marketplace from "./pages/Marketplace";
 import ProductDetails from "./pages/ProductDetails";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-
 
 // Buyer Pages
 import Wishlist from "./pages/Wishlist";
@@ -21,16 +19,13 @@ import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import MyOrders from "./pages/MyOrders";
 
-
 // Onboarding
 import CompleteProfile from "./pages/onboarding/CompleteProfile";
-
 
 // Smart Requests
 import CreateRequest from "./pages/requests/CreateRequest";
 import MyRequests from "./pages/requests/MyRequests";
 import RequestDetails from "./pages/requests/RequestDetails";
-
 
 // Seller Pages
 import BecomeSeller from "./pages/BecomeSeller";
@@ -40,10 +35,10 @@ import AddProduct from "./pages/AddProduct";
 import MyProducts from "./pages/MyProducts";
 import SellerOrders from "./pages/SellerOrders";
 import EditProduct from "./pages/EditProduct";
+
 import SubmitOffer from "./pages/seller/SubmitOffer";
 import NearbyRequests from "./pages/seller/NearbyRequests";
-
-
+import OrderDetails from "./pages/seller/OrderDetails";
 
 function App() {
 
@@ -51,11 +46,9 @@ function App() {
 
     <Routes>
 
-
       {/* ========================= */}
       {/* PUBLIC ROUTES */}
       {/* ========================= */}
-
 
       <Route path="/" element={<Home />} />
 
@@ -68,12 +61,10 @@ function App() {
         element={<ProductDetails />}
       />
 
-
       <Route
         path="/register"
         element={<Register />}
       />
-
 
       <Route
         path="/login"
@@ -86,7 +77,6 @@ function App() {
       {/* ONBOARDING */}
       {/* ========================= */}
 
-
       <Route
         path="/complete-profile"
         element={
@@ -98,12 +88,9 @@ function App() {
 
 
 
-
-
       {/* ========================= */}
       {/* BUYER ROUTES */}
       {/* ========================= */}
-
 
       <Route
         path="/account"
@@ -114,7 +101,6 @@ function App() {
         }
       />
 
-
       <Route
         path="/cart"
         element={
@@ -123,7 +109,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
 
       <Route
         path="/wishlist"
@@ -134,7 +119,6 @@ function App() {
         }
       />
 
-
       <Route
         path="/checkout"
         element={
@@ -144,7 +128,6 @@ function App() {
         }
       />
 
-
       <Route
         path="/payment-success"
         element={
@@ -153,7 +136,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
 
       <Route
         path="/my-orders"
@@ -166,12 +148,9 @@ function App() {
 
 
 
-
-
       {/* ========================= */}
       {/* SMART REQUEST ROUTES */}
       {/* ========================= */}
-
 
       <Route
         path="/create-request"
@@ -182,7 +161,6 @@ function App() {
         }
       />
 
-
       <Route
         path="/my-requests"
         element={
@@ -191,7 +169,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
 
       <Route
         path="/request/:id"
@@ -204,15 +181,9 @@ function App() {
 
 
 
-
-
-
-
       {/* ========================= */}
       {/* SELLER ROUTES */}
       {/* ========================= */}
-
-
 
       <Route
         path="/become-seller"
@@ -223,8 +194,6 @@ function App() {
         }
       />
 
-
-
       <Route
         path="/seller/business-info"
         element={
@@ -233,8 +202,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
-
 
       <Route
         path="/seller-dashboard"
@@ -245,8 +212,6 @@ function App() {
         }
       />
 
-
-
       <Route
         path="/seller/nearby-requests"
         element={
@@ -255,8 +220,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
-
 
       <Route
         path="/seller/offer/:id"
@@ -267,8 +230,6 @@ function App() {
         }
       />
 
-
-
       <Route
         path="/add-product"
         element={
@@ -277,8 +238,6 @@ function App() {
           </ProtectedRoute>
         }
       />
-
-
 
       <Route
         path="/my-products"
@@ -289,8 +248,6 @@ function App() {
         }
       />
 
-
-
       <Route
         path="/seller-orders"
         element={
@@ -300,7 +257,16 @@ function App() {
         }
       />
 
+      {/* NEW ORDER DETAILS PAGE */}
 
+      <Route
+        path="/seller/orders/:id"
+        element={
+          <ProtectedRoute>
+            <OrderDetails />
+          </ProtectedRoute>
+        }
+      />
 
       <Route
         path="/edit-product/:id"
@@ -313,26 +279,19 @@ function App() {
 
 
 
-
-
-
-
       {/* ========================= */}
       {/* FALLBACK */}
       {/* ========================= */}
-
 
       <Route
         path="*"
         element={<Home />}
       />
 
-
     </Routes>
 
   );
 
 }
-
 
 export default App;
