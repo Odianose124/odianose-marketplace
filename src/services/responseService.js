@@ -8,11 +8,10 @@ import {
   orderBy,
   doc,
   updateDoc,
+  getDoc,
 } from "firebase/firestore";
 
 import { db } from "../firebase/firebase";
-
-
 
 // =====================================
 // Submit Seller Offer
@@ -34,7 +33,6 @@ export async function submitSellerOffer({
 
 }) {
 
-
   const responseRef = await addDoc(
 
     collection(db, "responses"),
@@ -55,13 +53,11 @@ export async function submitSellerOffer({
 
       status: "pending",
 
-      createdAt:
-        serverTimestamp(),
+      createdAt: serverTimestamp(),
 
     }
 
   );
-
 
   return responseRef.id;
 
@@ -69,59 +65,33 @@ export async function submitSellerOffer({
 
 
 
-
-
-
-
 // =====================================
 // Get Offers For Request
 // =====================================
 
-export async function getRequestOffers(
-  requestId
-) {
-
+export async function getRequestOffers(requestId) {
 
   const q = query(
 
     collection(db, "responses"),
 
-    where(
-      "requestId",
-      "==",
-      requestId
-    ),
+    where("requestId", "==", requestId),
 
-    orderBy(
-      "createdAt",
-      "desc"
-    )
+    orderBy("createdAt", "desc")
 
   );
 
+  const snapshot = await getDocs(q);
 
+  return snapshot.docs.map((doc) => ({
 
-  const snapshot =
-    await getDocs(q);
+    id: doc.id,
 
+    ...doc.data(),
 
-
-  return snapshot.docs.map(
-    (doc) => ({
-
-      id: doc.id,
-
-      ...doc.data(),
-
-    })
-  );
+  }));
 
 }
-
-
-
-
-
 
 
 
@@ -141,9 +111,27 @@ export async function acceptOffer({
 
 }) {
 
+  // ------------------------------------
+  // Get Request Details
+  // ------------------------------------
+
+  const requestRef = doc(db, "requests", requestId);
+
+  const requestSnap = await getDoc(requestRef);
+
+  if (!requestSnap.exists()) {
+
+    throw new Error("Request not found.");
+
+  }
+
+  const request = requestSnap.data();
 
 
-  // Update accepted response
+
+  // ------------------------------------
+  // Accept Selected Response
+  // ------------------------------------
 
   const responseRef = doc(
 
@@ -155,135 +143,125 @@ export async function acceptOffer({
 
   );
 
+  await updateDoc(responseRef, {
 
-  await updateDoc(
+    status: "accepted",
 
-    responseRef,
+    updatedAt: serverTimestamp(),
 
-    {
-
-      status:"accepted",
-
-      updatedAt:
-        serverTimestamp(),
-
-    }
-
-  );
+  });
 
 
 
+  // ------------------------------------
+  // Update Request
+  // ------------------------------------
 
+  await updateDoc(requestRef, {
 
-  // Update request
+    status: "accepted",
 
-  const requestRef = doc(
+    selectedSeller: {
 
-    db,
+      sellerId,
 
-    "requests",
+      sellerName,
 
-    requestId
+    },
 
-  );
+    updatedAt: serverTimestamp(),
 
-
-
-  await updateDoc(
-
-    requestRef,
-
-    {
-
-      status:"accepted",
-
-
-      selectedSeller:{
-
-        sellerId,
-
-        sellerName,
-
-      },
-
-
-      updatedAt:
-        serverTimestamp(),
-
-    }
-
-  );
+  });
 
 
 
-
-
-  // Reject other offers
+  // ------------------------------------
+  // Reject Every Other Offer
+  // ------------------------------------
 
   const offersQuery = query(
 
-    collection(db,"responses"),
+    collection(db, "responses"),
 
-    where(
-
-      "requestId",
-
-      "==",
-
-      requestId
-
-    )
+    where("requestId", "==", requestId)
 
   );
 
+  const offersSnapshot = await getDocs(offersQuery);
 
+  const updates = offersSnapshot.docs.map(async (item) => {
 
-  const offersSnapshot =
-    await getDocs(
-      offersQuery
-    );
+    if (item.id !== responseId) {
 
+      await updateDoc(
 
+        doc(db, "responses", item.id),
 
+        {
 
-  const updates =
-    offersSnapshot.docs.map(
-      async(item)=>{
+          status: "rejected",
 
-
-        if(item.id !== responseId){
-
-
-          await updateDoc(
-
-            doc(
-              db,
-              "responses",
-              item.id
-            ),
-
-            {
-
-              status:"rejected",
-
-              updatedAt:
-                serverTimestamp(),
-
-            }
-
-          );
-
+          updatedAt: serverTimestamp(),
 
         }
 
+      );
 
-      }
+    }
 
-    );
-
-
+  });
 
   await Promise.all(updates);
+
+
+
+  // ------------------------------------
+  // Create Order
+  // ------------------------------------
+
+  await addDoc(
+
+    collection(db, "orders"),
+
+    {
+
+      buyerId: request.buyerId,
+
+      buyerName: request.buyerName,
+
+      sellerId,
+
+      sellerName,
+
+      requestId,
+
+      responseId,
+
+      title: request.title,
+
+      description: request.description,
+
+      category: request.category,
+
+      type: request.type,
+
+      amount: request.budget,
+
+      radius: request.radius,
+
+      orderStatus: "active",
+
+      paymentStatus: "pending",
+
+      deliveryStatus: "waiting",
+
+      createdAt: serverTimestamp(),
+
+      updatedAt: serverTimestamp(),
+
+    }
+
+  );
 
 
 
@@ -293,19 +271,11 @@ export async function acceptOffer({
 
 
 
-
-
-
-
-
 // =====================================
 // REJECT SELLER OFFER
 // =====================================
 
-export async function rejectOffer(
-  responseId
-){
-
+export async function rejectOffer(responseId) {
 
   const responseRef = doc(
 
@@ -317,27 +287,19 @@ export async function rejectOffer(
 
   );
 
-
-
   await updateDoc(
 
     responseRef,
 
     {
 
+      status: "rejected",
 
-      status:"rejected",
-
-
-      updatedAt:
-        serverTimestamp(),
-
+      updatedAt: serverTimestamp(),
 
     }
 
   );
-
-
 
   return true;
 
