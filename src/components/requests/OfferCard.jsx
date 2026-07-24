@@ -5,16 +5,23 @@ import {
 } from "react-icons/fa";
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   acceptOffer,
   rejectOffer,
 } from "../../services/responseService";
 
+import {
+  getChatById,
+} from "../../services/chatService";
+
 import { useResponses } from "../../context/ResponseContext";
 
 
 function OfferCard({ offer }) {
+
+const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
 
@@ -24,51 +31,51 @@ const { loadOffers } = useResponses();
 
   async function handleAccept() {
 
-    try {
+  try {
 
-      setLoading(true);
-
-
-      await acceptOffer({
-
-  responseId: offer.id,
-
-  requestId: offer.requestId,
-
-});
+    setLoading(true);
 
 
+    const chatId = await acceptOffer({
 
-      await loadOffers(offer.requestId);
+      responseId: offer.id,
 
-alert(
-  "Offer accepted successfully!"
-);
+      requestId: offer.requestId,
 
-
-    } catch(error) {
+    });
 
 
-      console.error(
-        "Accept Offer Error:",
-        error
-      );
+
+    await loadOffers(offer.requestId);
 
 
-      alert(
-        "Unable to accept offer."
-      );
+    navigate(`/chat/${chatId}`);
 
 
-    } finally {
+
+  } catch(error) {
 
 
-      setLoading(false);
+    console.error(
+      "Accept Offer Error:",
+      error
+    );
 
 
-    }
+    alert(
+      "Unable to accept offer."
+    );
+
+
+  } finally {
+
+
+    setLoading(false);
+
 
   }
+
+}
 
 
 
@@ -121,7 +128,44 @@ alert(
 
   }
 
+async function handleChat() {
 
+  try {
+
+    // Offer has not been accepted yet
+    if (!offer.chatId) {
+
+      alert(
+        "Please accept this offer before chatting."
+      );
+
+      return;
+
+    }
+
+    const chat = await getChatById(
+      offer.chatId
+    );
+
+    if (!chat) {
+
+      alert("Chat not found.");
+
+      return;
+
+    }
+
+    navigate(`/chat/${chat.id}`);
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Unable to open chat.");
+
+  }
+
+}
 
 
 
@@ -339,16 +383,17 @@ alert(
 
         <button
 
-          className="flex items-center justify-center gap-2 border border-green-700 text-green-700 py-3 rounded-xl hover:bg-green-50 transition"
+  onClick={handleChat}
 
-        >
+  className="flex items-center justify-center gap-2 border border-green-700 text-green-700 py-3 rounded-xl hover:bg-green-50 transition"
 
-          <FaComments/>
+>
 
-          Chat Seller
+  <FaComments/>
 
+  Chat Seller
 
-        </button>
+</button>
 
 
 

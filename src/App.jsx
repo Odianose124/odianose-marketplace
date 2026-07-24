@@ -39,6 +39,8 @@ import EditProduct from "./pages/EditProduct";
 import SubmitOffer from "./pages/seller/SubmitOffer";
 import NearbyRequests from "./pages/seller/NearbyRequests";
 import OrderDetails from "./pages/seller/OrderDetails";
+import ChatList from "./pages/chat/ChatList";
+import ChatRoom from "./pages/chat/ChatRoom";
 
 function App() {
 
@@ -146,7 +148,23 @@ function App() {
         }
       />
 
+<Route
+  path="/chats"
+  element={
+    <ProtectedRoute>
+      <ChatList />
+    </ProtectedRoute>
+  }
+/>
 
+<Route
+  path="/chat/:id"
+  element={
+    <ProtectedRoute>
+      <ChatRoom />
+    </ProtectedRoute>
+  }
+/>
 
       {/* ========================= */}
       {/* SMART REQUEST ROUTES */}

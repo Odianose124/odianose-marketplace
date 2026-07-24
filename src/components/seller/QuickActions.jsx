@@ -30,14 +30,14 @@ function QuickActions() {
       description: "Current ongoing jobs",
       icon: Briefcase,
       color: "bg-yellow-100 text-yellow-700",
-      link: "/seller/jobs",
+      link: "/seller-orders",
     },
     {
       title: "Messages",
       description: "Chat with customers",
       icon: MessageCircle,
       color: "bg-purple-100 text-purple-700",
-      link: "/messages",
+      link: "/chats",
     },
     {
       title: "Wallet",

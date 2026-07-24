@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
 
 import { useOrders } from "../../context/OrderContext";
+import { useChat } from "../../context/ChatContext";
 
 import {
   startOrder,
@@ -22,6 +23,10 @@ function OrderDetails() {
 
   const [loading, setLoading] =
     useState(false);
+
+    const navigate = useNavigate();
+
+const { startChat } = useChat();
 
   useEffect(() => {
 
@@ -88,6 +93,38 @@ function OrderDetails() {
     }
 
   }
+
+  async function handleChatBuyer() {
+
+  try {
+
+    const chat = await startChat({
+
+      orderId: selectedOrder.id,
+
+      requestId: selectedOrder.requestId,
+
+      buyerId: selectedOrder.buyerId,
+
+      buyerName: selectedOrder.buyerName,
+
+      sellerId: selectedOrder.sellerId,
+
+      sellerName: selectedOrder.sellerName,
+
+    });
+
+    navigate(`/chat/${chat.id}`);
+
+  } catch (error) {
+
+    console.error("Chat Error:", error);
+
+    alert("Unable to start chat.");
+
+  }
+
+}
 
 
 
@@ -275,12 +312,13 @@ function OrderDetails() {
 
 
           <button
-            className="border border-green-700 text-green-700 py-4 rounded-xl hover:bg-green-50 transition"
-          >
+  onClick={handleChatBuyer}
+  className="border border-green-700 text-green-700 py-4 rounded-xl hover:bg-green-50 transition"
+>
 
-            Chat Buyer
+  Chat Buyer
 
-          </button>
+</button>
 
         </div>
 

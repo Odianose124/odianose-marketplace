@@ -7,11 +7,14 @@ import { useResponses } from "../../context/ResponseContext";
 import RequestStatusBadge from "../../components/requests/RequestStatusBadge";
 import EmptyOffers from "../../components/requests/EmptyOffers";
 import OfferCard from "../../components/requests/OfferCard";
+import { useAuth } from "../../context/AuthContext";
 
 
 function RequestDetails() {
 
   const { id } = useParams();
+
+  const { currentUser, userProfile } = useAuth();
 
 
   const {
@@ -92,7 +95,10 @@ function RequestDetails() {
 
 
 
+const isSeller = userProfile?.roles?.seller;
 
+const isRequestOwner =
+  currentUser?.uid === selectedRequest?.buyerId;
 
 
 
@@ -243,25 +249,18 @@ function RequestDetails() {
 
           {/* SELLER ACTION */}
 
+{isSeller && !isRequestOwner && (
+  <div className="mt-10 border-t pt-8">
 
-          <div className="mt-10 border-t pt-8">
+    <Link
+      to={`/seller/offer/${selectedRequest.id}`}
+      className="inline-flex bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl transition"
+    >
+      Submit Offer
+    </Link>
 
-
-            <Link
-
-              to={`/seller/offer/${selectedRequest.id}`}
-
-              className="inline-flex bg-green-700 hover:bg-green-800 text-white px-6 py-3 rounded-xl transition"
-
-            >
-
-              Submit Offer
-
-            </Link>
-
-
-
-          </div>
+  </div>
+)}
 
 
 

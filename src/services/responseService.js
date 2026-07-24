@@ -13,6 +13,7 @@ import {
 
 import { db } from "../firebase/firebase";
 import { createOrder } from "./orderService";
+import { createChat } from "./chatService";
 
 
 
@@ -110,9 +111,8 @@ export async function acceptOffer({
 
 }) {
 
-  // ---------------------------------
-  // Get Request
-  // ---------------------------------
+
+  // GET REQUEST
 
   const requestRef = doc(
     db,
@@ -120,23 +120,31 @@ export async function acceptOffer({
     requestId
   );
 
-  const requestSnap = await getDoc(requestRef);
+
+  const requestSnap =
+    await getDoc(requestRef);
+
+
 
   if (!requestSnap.exists()) {
 
-    throw new Error("Request not found.");
+    throw new Error(
+      "Request not found."
+    );
 
   }
 
-  const request = requestSnap.data();
+
+  const request =
+    requestSnap.data();
 
 
 
-  // ---------------------------------
-  // Prevent duplicate acceptance
-  // ---------------------------------
 
-  if (request.status === "accepted") {
+
+  // PREVENT DUPLICATE ACCEPT
+
+  if(request.status === "accepted"){
 
     throw new Error(
       "This request has already been accepted."
@@ -146,9 +154,10 @@ export async function acceptOffer({
 
 
 
-  // ---------------------------------
-  // Get Accepted Response
-  // ---------------------------------
+
+
+
+  // GET RESPONSE
 
   const responseRef = doc(
     db,
@@ -156,125 +165,286 @@ export async function acceptOffer({
     responseId
   );
 
-  const responseSnap = await getDoc(responseRef);
 
-  if (!responseSnap.exists()) {
+  const responseSnap =
+    await getDoc(responseRef);
 
-    throw new Error("Offer not found.");
+
+
+  if(!responseSnap.exists()){
+
+    throw new Error(
+      "Offer not found."
+    );
 
   }
 
-  const response = responseSnap.data();
+
+  const response =
+    responseSnap.data();
 
 
 
-  // ---------------------------------
-  // Update Request FIRST
-  // ---------------------------------
-
-  await updateDoc(requestRef, {
-
-    status: "accepted",
-
-    selectedSeller: {
-
-      sellerId: response.sellerId,
-
-      sellerName: response.sellerName,
-
-    },
-
-    updatedAt: serverTimestamp(),
-
-  });
 
 
 
-  // ---------------------------------
-  // Update Accepted Offer
-  // ---------------------------------
 
-  await updateDoc(responseRef, {
-
-    status: "accepted",
-
-    updatedAt: serverTimestamp(),
-
-  });
+  // UPDATE REQUEST
 
 
+  await updateDoc(
 
-  // ---------------------------------
-  // Reject Other Offers
-  // ---------------------------------
+    requestRef,
+
+    {
+
+      status:"accepted",
+
+      selectedSeller:{
+
+
+        sellerId:
+        response.sellerId,
+
+
+        sellerName:
+        response.sellerName,
+
+
+      },
+
+
+      updatedAt:
+      serverTimestamp(),
+
+    }
+
+  );
+
+
+
+
+
+
+
+  // UPDATE ACCEPTED OFFER
+
+
+  await updateDoc(
+
+    responseRef,
+
+    {
+
+      status:"accepted",
+
+      updatedAt:
+      serverTimestamp(),
+
+    }
+
+  );
+
+
+
+
+
+
+
+
+  // REJECT OTHER OFFERS
+
 
   const offersQuery = query(
 
-    collection(db, "responses"),
+    collection(db,"responses"),
 
-    where("requestId", "==", requestId)
+    where(
+      "requestId",
+      "==",
+      requestId
+    )
 
   );
 
-  const offersSnapshot = await getDocs(offersQuery);
+
+
+  const offersSnapshot =
+  await getDocs(offersQuery);
+
+
+
 
   await Promise.all(
 
-    offersSnapshot.docs.map(async (offerDoc) => {
+    offersSnapshot.docs.map(
 
-      if (offerDoc.id !== responseId) {
+      async(offerDoc)=>{
 
-        await updateDoc(
 
-          doc(db, "responses", offerDoc.id),
+        if(offerDoc.id !== responseId){
 
-          {
 
-            status: "rejected",
+          await updateDoc(
 
-            updatedAt: serverTimestamp(),
+            doc(
+              db,
+              "responses",
+              offerDoc.id
+            ),
 
-          }
+            {
 
-        );
+              status:"rejected",
+
+              updatedAt:
+              serverTimestamp(),
+
+            }
+
+          );
+
+
+        }
+
 
       }
 
-    })
+    )
 
   );
 
 
 
-  // ---------------------------------
-  // Create Order
-  // ---------------------------------
 
-  const orderId = await createOrder({
 
-    buyerId: request.buyerId,
 
-    buyerName: request.buyerName,
 
-    sellerId: response.sellerId,
 
-    sellerName: response.sellerName,
+  // CREATE ORDER
+
+
+  const orderId =
+  await createOrder({
+
+    buyerId:
+    request.buyerId,
+
+
+    buyerName:
+    request.buyerName,
+
+
+    sellerId:
+    response.sellerId,
+
+
+    sellerName:
+    response.sellerName,
+
 
     requestId,
 
+
     responseId,
 
-    title: request.title,
 
-    category: request.category,
+    title:
+    request.title,
 
-    amount: response.offerPrice,
+
+    category:
+    request.category,
+
+
+    amount:
+    response.offerPrice,
+
 
   });
 
 
 
-  return orderId;
+
+
+
+
+
+
+  // CREATE CHAT AFTER ORDER
+
+const chat =
+await createChat({
+
+  orderId,
+
+  requestId,
+
+  buyerId:
+  request.buyerId,
+
+  buyerName:
+  request.buyerName,
+
+  sellerId:
+  response.sellerId,
+
+  sellerName:
+  response.sellerName,
+
+});
+
+
+// SAVE CHAT ID TO ORDER
+
+await updateDoc(
+
+  doc(db, "orders", orderId),
+
+  {
+
+    chatId: chat.id,
+
+    updatedAt: serverTimestamp(),
+
+  }
+
+);
+
+
+
+
+
+
+
+
+  // SAVE CHAT ID TO RESPONSE
+
+  await updateDoc(
+
+    responseRef,
+
+    {
+
+      chatId:
+      chat.id,
+
+      updatedAt:
+      serverTimestamp(),
+
+    }
+
+  );
+
+
+
+
+
+
+
+
+  return chat.id;
+
 
 }
 

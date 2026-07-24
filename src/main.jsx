@@ -9,6 +9,7 @@ import { SellerProvider } from "./context/SellerContext";
 import { RequestProvider } from "./context/RequestContext";
 import { ResponseProvider } from "./context/ResponseContext";
 import { OrderProvider } from "./context/OrderContext";
+import { ChatProvider } from "./context/ChatContext";
 import { WishlistProvider } from "./context/WishlistContext";
 import { CartProvider } from "./context/CartContext";
 
@@ -19,6 +20,7 @@ ReactDOM.createRoot(
 ).render(
   <React.StrictMode>
     <BrowserRouter>
+
       <AuthProvider>
 
         <SellerProvider>
@@ -33,7 +35,11 @@ ReactDOM.createRoot(
 
                   <OrderProvider>
 
-                    <App />
+                    <ChatProvider>
+
+                      <App />
+
+                    </ChatProvider>
 
                   </OrderProvider>
 
@@ -48,6 +54,7 @@ ReactDOM.createRoot(
         </SellerProvider>
 
       </AuthProvider>
+
     </BrowserRouter>
   </React.StrictMode>
 );
